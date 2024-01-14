@@ -1,0 +1,32 @@
+#100 Days of Code - Day 12 and 13
+#Data Wrangling
+
+#replacing missing values
+weight_avg = df['Weight_kg'].astype('float').mean(axis=0)
+df.replace(np.nan,weight_avg,inplace=True)
+
+#fixing data types
+df['Weight_kg'] = df['Weight_kg'].astype('float')
+df['Screen_Size_cm'] = df['Screen_Size_cm'].astype('float')
+
+# Data standardization: convert weight from kg to pounds
+df["Weight_kg"] = df["Weight_kg"]*2.205
+df.rename(columns={'Weight_kg':'Weight_pounds'}, inplace=True)
+
+# Data standardization: convert screen size from cm to inch
+df["Screen_Size_cm"] = df["Screen_Size_cm"]/2.54
+df.rename(columns={'Screen_Size_cm':'Screen_Size_inch'}, inplace=True)
+
+#Data Normalization
+df['CPU_frequency'] = df['CPU_frequency']/df['CPU_frequency'].max()
+#Binning
+bins = np.linspace(min(df['Price']),max(df['Price']),4)
+group_names = ['low','medium','high']
+df['price-binned'] = pd.cut(df['Price'],bins,labels=group_names,include_lowest=True)
+
+#Indicator Variable
+dummy_variable = pd.get_dummies(df['Screen'])
+dummy_variable.rename(columns={'IPS Panel':'Screen-IPS_panel', 'Full HD':'Screen-Full_HD'}, 
+inplace=True)
+df=pd.concat([df,dummy_variable],axis=1)
+df.drop('Screen',axis = 1,inplace=True)
